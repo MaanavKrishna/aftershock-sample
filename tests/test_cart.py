@@ -17,3 +17,10 @@ def test_rejects_zero_quantity():
     except ValueError:
         return
     raise AssertionError("expected ValueError")
+
+
+def test_discount_reduces_total():
+    cart = Cart()
+    cart.add("mug", "100.00")
+    cart.apply_discount("welcome10")
+    assert cart.total() == Decimal("90.00")
