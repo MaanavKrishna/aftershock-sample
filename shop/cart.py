@@ -9,6 +9,7 @@ class Cart:
     def __init__(self):
         self.lines = []
         self.discounts = []
+        self.applied_codes = set()
 
     def add(self, name: str, price: str, qty: int = 1) -> None:
         if qty < 1:
@@ -19,9 +20,13 @@ class Cart:
         return sum((price * qty for _, price, qty in self.lines), Decimal("0"))
 
     def apply_discount(self, code: str) -> None:
-        rate = self.CODES.get(code.upper())
+        key = code.upper()
+        rate = self.CODES.get(key)
         if rate is None:
             raise ValueError(f"unknown discount code {code!r}")
+        if key in self.applied_codes:
+            return  # a code applies once per cart, however often it is submitted
+        self.applied_codes.add(key)
         self.discounts.append(rate)
 
     def total(self) -> Decimal:
